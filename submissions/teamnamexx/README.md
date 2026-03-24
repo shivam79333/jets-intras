@@ -3,7 +3,7 @@
 
 ## Team Members
 * Member 1: [Name] - [GitHub Profile]
-* Member 2: [Name] - [GitHub Profile]
+* Member 2: [Name] - 
 * Member 3: [Name] - [GitHub Profile]
 * Member 4: Aditya Singh - https://github.com/bigboi-99
 
