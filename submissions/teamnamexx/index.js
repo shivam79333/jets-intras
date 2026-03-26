@@ -14,7 +14,6 @@ const ui = {
   trendIcon: document.getElementById("trendIcon"),
   trendValue: document.getElementById("trendValue"),
   predictedCloseText: document.getElementById("predictedCloseText"),
-  modelMeta: document.getElementById("modelMeta"),
   historyChart: document.getElementById("historyChart"),
   chartTitle: document.getElementById("chartTitle"),
   range24: document.getElementById("range24"),
@@ -79,8 +78,6 @@ function setPredictionUnavailable() {
   ui.trendText.className = "trend";
   ui.trendIcon.innerHTML = "";
   ui.trendValue.textContent = "--";
-  ui.predictedCloseText.textContent = "Tomorrow Close: --";
-  ui.modelMeta.textContent = "Model output unavailable.";
 }
 
 async function getJson(url) {
@@ -603,7 +600,6 @@ async function loadSelectedCoin() {
     const predictedCloseValue = Number(prediction.predictedClose);
     if (Number.isFinite(predictedCloseValue)) {
       ui.predictedCloseText.textContent = "Tomorrow Close: " + formatUSD(predictedCloseValue);
-      ui.modelMeta.textContent = "Model probability (UP): " + (prediction.probabilityUp * 100).toFixed(2) + "%";
     } else {
       setPredictionUnavailable();
     }
