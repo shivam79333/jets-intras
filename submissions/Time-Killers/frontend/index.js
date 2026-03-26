@@ -599,7 +599,7 @@ async function loadSelectedCoin() {
     setTrendDisplay(prediction.direction);
     const predictedCloseValue = Number(prediction.predictedClose);
     if (Number.isFinite(predictedCloseValue)) {
-      ui.predictedCloseText.textContent = "Tomorrow Close: " + formatUSD(predictedCloseValue);
+      ui.predictedCloseText.textContent = "Market will close tomorrow at" + formatUSD(predictedCloseValue);
     } else {
       setPredictionUnavailable();
     }
