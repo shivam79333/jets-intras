@@ -9,7 +9,7 @@
 
 ## 🔗 Project Links
 * **PPT link:** [add link for ppt explaining your solution]
-* **Hosted Demo:** [Link to live app, e.g., Vercel or Netlify]
+* **Hosted Demo:** https://time-killers.vercel.app/
 
 ## Technical Implementation
 
@@ -60,10 +60,10 @@ This allows us to perform instant ML inference on the frontend itself, without r
 
 ### Main Dashboard
 <p align="center">
-  <img src="screenshots/dashboard.png" width="700">
+  <img src="./screenshot/full.png" width="700">
 </p>
 
 ### AI Prediction Output
 <p align="center">
-  <img src="screenshots/prediction.png" width="700">
+  <img src="./screenshot/only_predicted.png" width="700">
 </p>
