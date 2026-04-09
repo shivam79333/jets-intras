@@ -337,9 +337,6 @@ function decodePredictedClose(rawClose, currentPrice, model) {
     if (Number.isFinite(denormalized) && denormalized > 0) return denormalized;
   }
 
-  // Updated models usually output tomorrow close directly from weights_close/bias_close.
-  if (raw > 0) return raw;
-
   const mode = String((model && (model.close_target || model.close_mode)) || "").toLowerCase();
   if (mode === "price") return raw > 0 ? raw : null;
   if (mode === "delta") return priceNow + raw > 0 ? priceNow + raw : null;
@@ -363,14 +360,39 @@ function decodePredictedClose(rawClose, currentPrice, model) {
   candidates.sort(function (a, b) {
     return a.rel - b.rel;
   });
+  if (candidates[0].rel > 0.8) return null;
   return candidates[0].value;
+}
+
+function adaptVolumeToModel(rawVolume, currentPrice, mean, scale) {
+  const volume = Number(rawVolume);
+  const price = Number(currentPrice);
+  if (!Number.isFinite(volume) || volume <= 0) return 0;
+
+  const candidates = [volume, volume / 1e3, volume / 1e6, volume / 1e9];
+  if (Number.isFinite(price) && price > 0) {
+    candidates.push(volume / price);
+    candidates.push(volume / (price * 1e3));
+  }
+
+  let best = candidates[0];
+  let bestScore = Infinity;
+  for (let i = 0; i < candidates.length; i++) {
+    const candidate = candidates[i];
+    const z = Math.abs(safeScale(candidate, mean, scale));
+    if (z < bestScore) {
+      bestScore = z;
+      best = candidate;
+    }
+  }
+  return best;
 }
 
 function predictFromModel(featureBundle, currentPrice) {
   const model = state.modelConfig;
   if (!model || !model.weights || !featureBundle || !featureBundle.features) return null;
 
-  const features = featureBundle.features;
+  const features = featureBundle.features.slice();
   if (features.length !== FEATURE_NAMES.length) return null;
 
   const trendWeights = Array.isArray(model.weights[0]) ? model.weights[0] : model.weights;
@@ -391,6 +413,10 @@ function predictFromModel(featureBundle, currentPrice) {
 
   const mean = identityScaler ? featureBundle.localMean || [] : modelMean;
   const scale = identityScaler ? featureBundle.localScale || [] : modelScale;
+
+  if (!identityScaler) {
+    features[0] = adaptVolumeToModel(features[0], currentPrice, mean[0], scale[0]);
+  }
 
   const trendBias = Array.isArray(model.bias) ? Number((model.bias || [0])[0]) : Number(model.bias || 0);
   const closeBias = Array.isArray(model.bias_close)
