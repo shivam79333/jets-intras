@@ -78,6 +78,7 @@ function setPredictionUnavailable() {
   ui.trendText.className = "trend";
   ui.trendIcon.innerHTML = "";
   ui.trendValue.textContent = "--";
+  ui.predictedCloseText.textContent = "Market will close tomorrow at: --";
 }
 
 async function getJson(url) {
@@ -336,6 +337,9 @@ function decodePredictedClose(rawClose, currentPrice, model) {
     if (Number.isFinite(denormalized) && denormalized > 0) return denormalized;
   }
 
+  // Updated models usually output tomorrow close directly from weights_close/bias_close.
+  if (raw > 0) return raw;
+
   const mode = String((model && (model.close_target || model.close_mode)) || "").toLowerCase();
   if (mode === "price") return raw > 0 ? raw : null;
   if (mode === "delta") return priceNow + raw > 0 ? priceNow + raw : null;
@@ -347,7 +351,7 @@ function decodePredictedClose(rawClose, currentPrice, model) {
   function pushCandidate(value) {
     if (!Number.isFinite(value) || value <= 0) return;
     const rel = Math.abs(value - priceNow) / priceNow;
-    if (rel <= 0.6) candidates.push({ value: value, rel: rel });
+    candidates.push({ value: value, rel: rel });
   }
 
   pushCandidate(raw);
@@ -599,7 +603,7 @@ async function loadSelectedCoin() {
     setTrendDisplay(prediction.direction);
     const predictedCloseValue = Number(prediction.predictedClose);
     if (Number.isFinite(predictedCloseValue)) {
-      ui.predictedCloseText.textContent = "Market will close tomorrow at" + formatUSD(predictedCloseValue);
+      ui.predictedCloseText.textContent = "Market will close tomorrow at: " + formatUSD(predictedCloseValue);
     } else {
       setPredictionUnavailable();
     }
