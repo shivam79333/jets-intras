@@ -6,6 +6,7 @@
 * Member 2: Shivam Kumar  - https://github.com/shivam79333
 * Member 3: Harshit Nayak - https://github.com/nayak-harshit
 * Member 4: Aditya Singh - https://github.com/bigboi-99
+* Member 5: Nandini Singh - https://github.com/nandinisingh03
 
 ## 🔗 Project Links
 * **PPT link:** [add link for ppt explaining your solution]
